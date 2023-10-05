@@ -32,10 +32,11 @@ public class Booking : IBooking
 
     public double GetCost()
     {
-        var kmCost = (KmReturned - KmRented) * Vehicle.CostKM;
+        var kmCost = 0.0;
+        if (KmReturned is not null) kmCost = (double)(KmReturned - KmRented) * Vehicle.CostKM;
         var daysCost = (ReturnDate.DayNumber - RentedDate.DayNumber) * Vehicle.CostDay;
 
-        return (double)(kmCost + daysCost);
+        return (kmCost + daysCost);
     }
 
     public void CloseBooking(DateOnly date, int odometer)
