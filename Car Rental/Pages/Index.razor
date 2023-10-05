@@ -1,0 +1,111 @@
+﻿@page "/"
+@using Car_Rental.Business.Classes;
+@using Car_Rental.Common.Enums;
+@using Car_Rental.Common.Extensions;
+@using System.Globalization;
+@inject BookingProcessor br;
+
+<PageTitle>Car Rental Assignment</PageTitle>
+
+<h1>Car Rental Assignment</h1>
+
+<div class="row">
+
+    <div class="border border-dark col-md-12 col-xl-8 overflow-auto d-flex justify-content-center">
+        <table class="table table-borderless align-bottom">
+            <thead>
+                <tr>
+                    <th>RegNO</th>
+                    <th>Make</th>
+                    <th>Odometer</th>
+                    <th>Cost Km</th>
+                    <th>Vehicle Type</th>
+                    <th>$ Day</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var vehicle in br.GetVehicles())
+                {
+                    <tr>
+                        <td class="fw-bold">@vehicle.RegNo</td>
+                        <td>@vehicle.Make</td>
+                        <td>@vehicle.Odometer.ToKm()</td>
+                        <td>@vehicle.CostKM.ToDollar()</td>
+                        <td>@vehicle.VehicleType</td>
+                        <td>@vehicle.CostDay.ToDollar()</td>
+                        <td>
+                            <span class="btn btn-sm rounded-pill w-100 @(vehicle.Status.Equals(VehicleStatuses.Available) ? "btn-dark" : "btn-danger")">@vehicle.Status</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="border border-dark col-md-12 col-xl-8 d-flex justify-content-center overflow-auto">
+        <table class="table m-0 align-bottom">
+            <thead>
+                <tr>
+                    <th>RegNo</th>
+                    <th>Customer</th>
+                    <th>Km Rented</th>
+                    <th>Km Returned</th>
+                    <th>Rented</th>
+                    <th>Returned</th>
+                    <th>Cost</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var booking in br.GetBookings())
+                {
+                    <tr>
+                        <td class="fw-bold">@booking.Vehicle.RegNo</td>
+                        <td>@booking.Customer.Name</td>
+                        <td>@booking.KmRented.ToKm()</td>
+                        <td>@booking.KmReturned?.ToKm()</td>
+                        <td>@booking.RentedDate</td>
+                        <td style="@(booking.Vehicle.Status.Equals(VehicleStatuses.Available) ? "" : "visibility:hidden")">@booking.ReturnDate</td>
+                        <td>@booking.Cost?.ToDollar()</td>
+                        <td>
+                            <span class="btn btn-sm rounded-pill w-100 @(booking.Vehicle.Status.Equals(VehicleStatuses.Booked) ? "btn-danger" : "btn-success")">
+                                @{
+                                    string message = booking.Vehicle.Status.Equals(VehicleStatuses.Booked) ? "Open" : "Closed";
+                                    @message;
+                                }
+                            </span>    
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+
+<div class="row">
+    <div class="border border-dark col-md-6 col-xl-4">
+        <table class="table m-0 align-bottom">
+            <thead>
+                <tr>
+                    <th class="fw-bold">SSN</th>
+                    <th class="fw-bold">Last Name</th>
+                    <th class="fw-bold">First Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in br.GetCustomers())
+                {
+                    <tr>
+                        <td class="fw-bold">@customer.SSN</td>
+                        <td>@customer.LastName</td>
+                        <td>@customer.FirstName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
