@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace Car_Rental.Common.Classes;
 public class Motorcycle : IVehicle
 {
+    public int Id { get; init; }
     public VehicleTypes VehicleType { get; init; }
     public VehicleStatuses Status { get; private set; }
     public string Make { get; init; }
@@ -17,8 +18,8 @@ public class Motorcycle : IVehicle
     public double CostKM { get; init; }
     public double CostDay { get; init; }
 
-    public Motorcycle(VehicleTypes vehicleType, double costKM, double costDay, string make, string regNo, int odometer, VehicleStatuses status = VehicleStatuses.Available) => 
-        (VehicleType, CostKM, CostDay, Make, RegNo, Odometer, Status) = (vehicleType, costKM, costDay, make, regNo, odometer, status);
+    public Motorcycle(int id, VehicleTypes vehicleType, double costKM, double costDay, string make, string regNo, int odometer, VehicleStatuses status = VehicleStatuses.Available) => 
+        (Id, VehicleType, CostKM, CostDay, Make, RegNo, Odometer, Status) = (id,vehicleType, costKM, costDay, make, regNo, odometer, status);
 
     public void ReturnVehicle(int odometer) => (Odometer, Status) = (odometer, VehicleStatuses.Available);
 

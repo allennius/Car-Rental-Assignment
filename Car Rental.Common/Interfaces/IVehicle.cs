@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Car_Rental.Common.Interfaces;
-public interface IVehicle
+public interface IVehicle : IEntity
 {
     public VehicleTypes VehicleType { get; init; }
     public VehicleStatuses Status { get; }

@@ -18,7 +18,6 @@ public class Booking : IBooking
     public DateOnly ReturnDate { get ; set ; } = default;
     public double? Cost { get; set; } = default;
 
-
     public Booking(int id, IVehicle vehicle, IPerson customer, int kmRented, DateOnly rentedDate)
     {
         Id = id;
