@@ -18,6 +18,7 @@ public class Booking : IBooking
     public DateOnly RentedDate { get; init; }
     public DateOnly ReturnDate { get ; set ; } = default;
     public double? Cost { get; set; } = default;
+    public BookingStatus Status { get; private set; }
 
     public Booking(int id, IVehicle vehicle, IPerson customer, int kmRented, DateOnly rentedDate)
     {
@@ -26,6 +27,7 @@ public class Booking : IBooking
         Customer = customer;
         KmRented = kmRented;
         RentedDate = rentedDate;
+        Status = BookingStatus.Booked;
 
         Vehicle.Book();
     }
@@ -43,6 +45,7 @@ public class Booking : IBooking
         ReturnDate = date;
         KmReturned = odometer;
         Cost = GetCost();
+        Status = BookingStatus.Closed;
         Vehicle.ReturnVehicle(odometer);
     }
 }

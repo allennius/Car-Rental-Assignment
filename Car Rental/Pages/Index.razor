@@ -131,10 +131,10 @@
                         <td>@booking.KmRented.ToKm()</td>
                         <td>@booking.KmReturned?.ToKm()</td>
                         <td>@booking.RentedDate</td>
-                        <td style="@(booking.Vehicle.Status.Equals(VehicleStatuses.Available) ? "" : "visibility:hidden")">@booking.ReturnDate</td>
+                        <td style="@(booking.Status.Equals(BookingStatus.Closed) ? "" : "visibility:hidden")">@booking.ReturnDate</td>
                         <td>@booking.Cost?.ToDollar()</td>
                         <td>
-                            <span class="btn btn-sm rounded-pill w-100 @(booking.Vehicle.Status.Equals(VehicleStatuses.Booked) ? "btn-danger" : "btn-success")">
+                            <span class="btn btn-sm rounded-pill w-100 @(booking.Status.Equals(BookingStatus.Booked) ? "btn-danger" : "btn-success")">
                                 @{
                                     string message = booking.Vehicle.Status.Equals(VehicleStatuses.Booked) ? "Open" : "Closed";
                                     @message;

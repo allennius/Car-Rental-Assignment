@@ -54,13 +54,15 @@ public class BookingProcessor
         }
     }
 
-    public IPerson? GetPerson(string ssn)
+    public IPerson? GetPerson(int ssn)
     {
         ClearStrings();
         try
         {
-            return _db.GetSingle<IPerson>(p => p.SSN.Equals(ssn));
-
+            var result = _db.GetSingle<IPerson>(p => p.SSN.Equals(ssn));
+            if (result == null)
+                _error = $"Couldn't find person with SSN: {ssn}";
+            return result;
         }
         catch (Exception ex)
         {
@@ -197,16 +199,19 @@ public class BookingProcessor
         }
     }
 
-    public void AddCustomer(string socialSecurityNumber, string firstName, string lastName)
+    public void AddCustomer(int? socialSecurityNumber, string firstName, string lastName)
     {
         ClearStrings();
         try
         {
-            if (int.TryParse(socialSecurityNumber, out int ssn))
-                _db.Add<Customer>(new(_db.NextPersonId, firstName, lastName, ssn));
-                
-            else
-                throw new ArgumentException($"Could not add Customer, Check Input");
+            var ssn = socialSecurityNumber.Equals(null)
+               ? throw new ArgumentException("SSN Has to have a value")
+               : socialSecurityNumber.Value;
+            if (GetPerson(ssn) != null)
+                throw new Exception("Person already exist in Db");
+
+            ClearStrings();
+                _db.Add<IPerson>(new Customer(_db.NextPersonId, firstName, lastName, ssn));
 
            _message = "Added new Customer";
         }

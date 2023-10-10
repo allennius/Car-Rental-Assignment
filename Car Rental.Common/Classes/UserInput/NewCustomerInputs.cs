@@ -8,14 +8,14 @@ namespace Car_Rental.Common.Classes.UserInput;
 public class NewCustomerInputs
 {
     public string errorMessage = string.Empty;
-    public string socialSecurityNumber = string.Empty;
+    public int? socialSecurityNumber = default;
     public string firstName = string.Empty;
     public string lastName = string.Empty;
     
     public bool isInputs()
     {
         errorMessage = string.Empty;
-        if (socialSecurityNumber.Equals(string.Empty)) errorMessage += " SSN,";
+        if (socialSecurityNumber.Equals(null)) errorMessage += " SSN,";
         if (firstName.Equals(string.Empty)) errorMessage += " Firstname,";
         if (lastName.Equals(string.Empty)) errorMessage += " Lastname,";
 

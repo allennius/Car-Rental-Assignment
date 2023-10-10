@@ -13,6 +13,8 @@ public interface IBooking : IEntity
     public DateOnly ReturnDate { get; set; }
     public double? Cost { get; set; }
 
+    BookingStatus Status { get; }
+
     public double GetCost();
     public void CloseBooking(DateOnly date, int odometer);
 }

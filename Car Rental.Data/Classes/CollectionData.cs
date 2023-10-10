@@ -42,7 +42,7 @@ public class CollectionData : IData
         _vehicles.Add(new Motorcycle(NextVehicleId, VehicleTypes.Motorcycle, 1, 40, "Husqvarna", "TTC300", 50));
 
         IVehicle vehicle = _vehicles.Single(v => v.Id.Equals(1));
-        IVehicle vehicle2 = _vehicles.OfType<IVehicle>().Single(v => v.Id.Equals(3));
+        IVehicle vehicle2 = _vehicles.Single(v => v.Id.Equals(3));
 
         _bookings.Add(new Booking(NextBookingId, vehicle, _persons.OfType<IPerson>().Single(p => p.SSN.Equals(99002)),
             vehicle.Odometer, DateOnly.FromDateTime(DateTime.Now)));
@@ -51,7 +51,7 @@ public class CollectionData : IData
             vehicle2.Odometer, DateOnly.FromDateTime(DateTime.Now)));
 
         // close one booking
-        _bookings.First(b => b.Id.Equals(1)).CloseBooking(DateOnly.FromDateTime(DateTime.Today.AddDays(3)), 20500);
+        _bookings.First(b => b.Id.Equals(1)).CloseBooking(DateOnly.FromDateTime(DateTime.Now).AddDays(3), 20500);
     }
 
 
@@ -94,7 +94,7 @@ public class CollectionData : IData
 
             if (expression == null) return null;
 
-            var entity = data.FirstOrDefault(expression.Compile());
+            var entity = data.SingleOrDefault(expression.Compile());
             if (entity == null)
                 throw new NullReferenceException("Could not find entity in db");
             return entity;
@@ -137,7 +137,7 @@ public class CollectionData : IData
     {
         try
         {
-            var booking = GetSingle<IBooking>(b => b.Vehicle.Id.Equals(vehicleId));
+            var booking = GetSingle<IBooking>(b => b.Vehicle.Id.Equals(vehicleId) && b.Status.Equals(BookingStatus.Booked));
             if (booking.Equals(null))
                 throw new NullReferenceException($"Return Failed: VehicleId{vehicleId}");
 
