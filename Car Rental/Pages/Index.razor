@@ -47,7 +47,7 @@
                     </td>
                     <td><input type="text" class="form-control" placeholder="CostDay" @bind="vi.costDay" disabled="@(br.loading == true ? "disabled" : null)" /></td>
                     <td>
-                        <button class="btn btn-light text-success btn-outline-success" @onclick="(() => { if(vi.isInputs()) br.AddVehicle(vi.make, vi.odometer, vi.costKm, vi.costDay, vi.regNo, vi.type); })" disabled="@(br.loading == true ? "disabled" : null)">
+                        <button class="btn btn-light text-success btn-outline-success" @onclick="(() => { if(vi.isInputs()) br.AddVehicle(vi.make.ToUpper(), vi.odometer, vi.costKm, vi.costDay, vi.regNo.ToUpper(), vi.type); })" disabled="@(br.loading == true ? "disabled" : null)">
                             Add
                         </button>
                     </td>
@@ -78,8 +78,8 @@
                 @foreach (var vehicle in br.GetVehicles())
                 {
                     <tr>
-                        <td class="fw-bold">@vehicle.RegNo</td>
-                        <td>@vehicle.Make</td>
+                        <td class="fw-bold">@vehicle.RegNo.ToUpper()</td>
+                        <td>@vehicle.Make.ToUpper()</td>
                         <td>@vehicle.Odometer.ToKm()</td>
                         <td>@vehicle.CostKM.ToDollar()</td>
                         <td>@vehicle.VehicleType</td>
@@ -126,7 +126,7 @@
                 @foreach(var booking in br.GetBookings())
                 {
                     <tr>
-                        <td class="fw-bold">@booking.Vehicle.RegNo</td>
+                        <td class="fw-bold">@booking.Vehicle.RegNo.ToUpper()</td>
                         <td>@booking.Customer.Name</td>
                         <td>@booking.KmRented.ToKm()</td>
                         <td>@booking.KmReturned?.ToKm()</td>

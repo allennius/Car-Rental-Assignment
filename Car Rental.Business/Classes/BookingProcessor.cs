@@ -108,7 +108,7 @@ public class BookingProcessor
         ClearStrings();
         try
         {
-            var result = _db.GetSingle<IVehicle>(v => v.RegNo.Equals(regNo));
+            var result = _db.GetSingle<IVehicle>(v => v.RegNo.ToUpper().Equals(regNo.ToUpper()));
             if (result == null)
                 _error = $"Couldn't find vehicle with regNo {regNo}";
             return result;
@@ -188,9 +188,9 @@ public class BookingProcessor
             ClearStrings();
 
             if (type.Equals(VehicleTypes.Motorcycle))
-                _db.Add<IVehicle>(new Motorcycle(_db.NextVehicleId, type, costKm, costDay, make, regNo, odometer, status));
+                _db.Add<IVehicle>(new Motorcycle(_db.NextVehicleId, type, costKm, costDay, make.ToUpper(), regNo.ToUpper(), odometer, status));
             else
-                _db.Add<IVehicle>(new Car(_db.NextVehicleId, type, costKm, costDay, make, regNo, odometer, status));
+                _db.Add<IVehicle>(new Car(_db.NextVehicleId, type, costKm, costDay, make.ToUpper(), regNo.ToUpper(), odometer, status));
 
             _message = $"Added new: {type}";
         }
