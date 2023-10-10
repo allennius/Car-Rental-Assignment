@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 namespace Car_Rental.Common.Classes;
 public class Customer : IPerson
 {
+    public int Id { get; init; }
     public string FirstName { get; init; } = string.Empty;
     public string LastName { get; init; } = string.Empty;
     public string Name => $"{FirstName} {LastName}";
     public int SSN { get; init; }
 
-    public Customer(string firstName, string lastName, int ssn) =>
-        (FirstName, LastName, SSN) = (firstName, lastName, ssn);
+    public Customer(int id, string firstName, string lastName, int ssn) =>
+        (Id, FirstName, LastName, SSN) = (id, firstName, lastName, ssn);
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Car_Rental.Common.Interfaces;
-public interface IPerson
+public interface IPerson : IEntity
 {
     public string FirstName { get; init; }
     public string LastName { get; init; }
