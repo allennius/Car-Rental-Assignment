@@ -133,14 +133,15 @@ public class BookingProcessor
             loading = true;
             await Task.Delay(5000);
             loading = false;
-            var result = _db.RentVehicle(vehicleId, customerId);
-            if (result.Equals(null))
+            var booking = _db.RentVehicle(vehicleId, customerId);
+            if (booking.Equals(null))
             {
                 loading = false;
                 throw new ArgumentNullException($"Booking Failed: VehicleId: {vehicleId}, CustomerId: {customerId}");
             }
-            _message = "Rented Vehicle";
-            return result;
+            _message = "RENTED: " + booking.ToString();
+
+            return booking;
         }
         catch (Exception ex)
         {
@@ -164,7 +165,7 @@ public class BookingProcessor
             }   
 
             var booking = _db.ReturnVehicle(vehicleId, newOdo);
-            _message = $"Vehicle: {vehicleId} RegNo: {vehicle?.RegNo } Returned";
+            _message = "RETURNED: " + booking.ToString();
             return booking;
         }
         catch ( Exception ex)
@@ -191,7 +192,7 @@ public class BookingProcessor
             else
                 _db.Add<IVehicle>(new Car(_db.NextVehicleId, type, costKm, costDay, make, regNo, odometer, status));
 
-            _message = $"Added new {type}";
+            _message = $"Added new: {type}";
         }
         catch (Exception ex)
         {
@@ -211,9 +212,9 @@ public class BookingProcessor
                 throw new Exception("Person already exist in Db");
 
             ClearStrings();
-                _db.Add<IPerson>(new Customer(_db.NextPersonId, firstName, lastName, ssn));
+            _db.Add<IPerson>(new Customer(_db.NextPersonId, firstName, lastName, ssn));
 
-           _message = "Added new Customer";
+           _message = "Added new customer";
         }
         catch (Exception ex)
         {

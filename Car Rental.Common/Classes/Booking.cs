@@ -32,6 +32,11 @@ public class Booking : IBooking
         Vehicle.Book();
     }
 
+    public override string ToString()
+    {
+        return $"Booking: {Id}, Of Vehicle: {Vehicle.RegNo}, and Customer: {Customer.Name}.";
+    }
+
     public double GetCost()
     {
         var kmCost = (KmReturned - KmRented) * Vehicle.CostKM;
