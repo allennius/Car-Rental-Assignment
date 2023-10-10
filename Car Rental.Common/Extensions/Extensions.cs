@@ -12,6 +12,6 @@ public static class Extensions
 
     public static string ToKm(this int value) => string.Format(new CultureInfo("en-US"), $"{value:N0} km");
 
+    public static int Duration(this DateOnly startDate, DateOnly endDate) =>
+        endDate.DayNumber - startDate.DayNumber;
 }
-
-

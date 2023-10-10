@@ -1,10 +1,11 @@
 ﻿@page "/"
-@using Car_Rental.Business.Classes;
-@using Car_Rental.Common.Enums;
-@using Car_Rental.Common.Extensions;
+@using Car_Rental.Common.Classes.UserInput;
 @using System.Globalization;
-@using Car_Rental.Common.Interfaces;
 @inject BookingProcessor br;
+@inject NewCustomerInputs ci;
+@inject NewVehicleInputs vi;
+@inject ReturnVehicle returnv;
+@inject RentVehicle rentv;
 
 <PageTitle>Car Rental Assignment</PageTitle>
 
@@ -12,9 +13,12 @@
 
 <div class="row">
 
-    <div class="border border-dark col-md-12 col-xl-8 overflow-auto d-flex justify-content-center">
-        <table class="table table-borderless align-bottom">
-            <thead>
+    <div class="alert alert-danger alertVehicleBox col-sm-12 col-xxl-8 @(vi.errorMessage.Equals(string.Empty) ? "visually-hidden" : "")">@vi.errorMessage</div>
+    <div class="alert alert-danger alertVehicleBox col-sm-12 col-xxl-8 @(br._error.Equals(string.Empty) ? "visually-hidden" : "")">@br._error</div>
+    <div class="alert alert-success alertVehicleBox col-sm-12 col-xxl-8 @(br._message.Equals(string.Empty) ? "visually-hidden" : "")">@br._message</div>
+    <div class="border border-dark p-0 col-sm-12 col-xxl-8 overflow-auto d-flex justify-content-center">
+        <table class="table table-borderless align-bottom text-center">
+            <thead class="m-0 bg-black text-light">
                 <tr>
                     <th>RegNO</th>
                     <th>Make</th>
@@ -22,11 +26,56 @@
                     <th>Cost Km</th>
                     <th>Vehicle Type</th>
                     <th>$ Day</th>
+                    <th>Action</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach(var vehicle in br.GetVehicles())
+                <tr>
+                    <td><input type="text" class="form-control" placeholder="RegNo" @bind="vi.regNo" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="Make" @bind="vi.make" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="Odometer" @bind="vi.odometer" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="CostKm" @bind="vi.costKm" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td class="col-md-2 col-xl-2">
+                        <select class="form-select" disabled="@(br.loading == true ? "disabled" : null)" @bind="vi.type">
+                            @foreach (var type in br.VehicleTypeNames.Reverse())
+                            {
+                                <option value="@type" disabled="@(VehicleStatuses.None.ToString() == type ? "disabled" : null)">@type</option>
+                            }
+
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control" placeholder="CostDay" @bind="vi.costDay" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td>
+                        <button class="btn btn-light text-success btn-outline-success" @onclick="(() => { if(vi.isInputs()) br.AddVehicle(vi.make, vi.odometer, vi.costKm, vi.costDay, vi.regNo, vi.type); })" disabled="@(br.loading == true ? "disabled" : null)">
+                            Add
+                        </button>
+                    </td>
+
+                    <td><span style="@(br.loading ? "" : "visibility:hidden")" class="badge rounded-pill w-100 bg-warning pulse">Processing</span></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <label for="customizedInput">Customer</label>
+
+                            <select class="form-select customizedInput position-relative" disabled="@(br.loading == true ? "disabled" : null)" @bind="rentv.customerId">
+                                @foreach (var customer in br.GetCustomers())
+                                {
+                                    <option value="@customer.Id" >@customer.Name</option>
+                                }
+                                <option selected disabled>Customer</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                @foreach (var vehicle in br.GetVehicles())
                 {
                     <tr>
                         <td class="fw-bold">@vehicle.RegNo</td>
@@ -36,7 +85,20 @@
                         <td>@vehicle.VehicleType</td>
                         <td>@vehicle.CostDay.ToDollar()</td>
                         <td>
-                            <span class="btn btn-sm rounded-pill w-100 @(vehicle.Status.Equals(VehicleStatuses.Available) ? "btn-dark" : "btn-danger")">@vehicle.Status</span>
+                            @if (vehicle.Status.Equals(VehicleStatuses.Available))
+                            {
+                                <button class="btn btn-light text-primary btn-outline-primary" @onclick="() => br.RentVehicle(vehicle.Id, rentv.customerId)" disabled="@(br.loading == true ? "disabled" : null)">Rent</button>
+                            }
+                            else
+                            {
+                                <div class="d-flex flex-sm-column flex-xxl-row m-auto align-items-center">
+                                    <input type="text" class="customizedInput col-sm-12 col-xxl-6" placeholder="Odometer" @bind="@returnv.odometer" disabled="@(br.loading == true ? "disabled" : null)"  />
+                                    <button class="button-next-to-input btn btn-light text-success btn-outline-success col-sm-12 col-xxl-6 " @onclick="() => br.ReturnVehicle(vehicle.Id, returnv.odometer)" disabled="@(br.loading == true ? "disabled" : null)">Return</button>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <span class="btn btn-small rounded-pill w-100 @(vehicle.Status.Equals(VehicleStatuses.Available) ? "btn-dark" : "btn-danger")">@vehicle.Status</span>
                         </td>
                     </tr>
                 }
@@ -46,7 +108,7 @@
 </div>
 <br />
 <div class="row">
-    <div class="border border-dark col-md-12 col-xl-8 d-flex justify-content-center overflow-auto">
+    <div class="border border-dark col-sm-12 col-xxl-8 d-flex justify-content-center overflow-auto">
         <table class="table m-0 align-bottom">
             <thead>
                 <tr>
@@ -87,17 +149,25 @@
 </div>
 <br />
 
-<div class="row">
-    <div class="border border-dark col-md-6 col-xl-4">
+<div class="row d-block">
+<div class="alert alert-danger alertCustomerBox col-sm-6 col-xl-4 @(ci.errorMessage.Equals(string.Empty) ? "visually-hidden" : "")">@ci.errorMessage</div>
+    <div class="border border-dark col-sm-6 col-xl-4">
         <table class="table m-0 align-bottom">
-            <thead>
+            <thead class="p-0">
                 <tr>
                     <th class="fw-bold">SSN</th>
                     <th class="fw-bold">Last Name</th>
                     <th class="fw-bold">First Name</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td><input class="form-control" @bind="ci.socialSecurityNumber" placeholder="SSN"/></td>
+                    <td><input class="form-control" @bind="ci.firstName" placeholder="Lastname"/></td>
+                    <td><input class="form-control" @bind="ci.lastName" placeholder="Firstname"/></td>
+                    <td><button class="btn btn-light btn-success btn-outline-success" @onclick="() => { if (ci.isInputs()) br.AddCustomer(ci.socialSecurityNumber, ci.firstName, ci.lastName); }" >Add</button></td>
+                </tr>
                 @foreach (var customer in br.GetCustomers())
                 {
                     <tr>
@@ -110,3 +180,18 @@
         </table>
     </div>
 </div>
+
+<div class="m-3"></div>
+
+
+
+<!--
+
+    1: Done
+    2: Rent Vehicle customer check, errormessage Done
+    3: return Vehicle Odometer check, errormessage Done
+    4: Done
+    5: add customer check, error message
+
+
+-->

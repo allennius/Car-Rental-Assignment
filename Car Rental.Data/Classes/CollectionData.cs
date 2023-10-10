@@ -2,132 +2,115 @@
 using Car_Rental.Common.Enums;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
+using Microsoft.VisualBasic.FileIO;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.Intrinsics.X86;
 
 namespace Car_Rental.Data.Classes;
 public class CollectionData : IData
 {
-    public int NextVehicleId
-    {
-        get 
-        {
-            if (!_data.OfType<IVehicle>().Any())
-                return 0;
-            var id = _data.OfType<IVehicle>().Max(x => x.Id) + 1;
-            if (id.Equals(null))
-                return 0;
-            return id;
-        }
-    }        
-    public int NextBookingId
-    {
-        get 
-        {
-            if (!_data.OfType<IBooking>().Any())
-                return 0;
-            var id = _data.OfType<IBooking>().Max(x => x.Id) + 1;
-            if (id.Equals(null))
-                return 0;
-            return id;
-        }
-    } 
-    public int NextPersonId
-    {
-        get 
-        {
-            if (!_data.Any(x => x.GetType().Equals(typeof(IPerson))))
-                return 0;
-            var id = _data.OfType<IPerson>().Max(x => x.Id) + 1;
-            if (id.Equals(null))
-                return 0;
-            return id;
-        }
-    } 
-
-    readonly List<IPerson> _persons = new List<IPerson>();
-    readonly List<IBooking> _bookings = new List<IBooking>();
     readonly List<IVehicle> _vehicles = new List<IVehicle>();
+    readonly List<IBooking> _bookings = new List<IBooking>();
+    readonly List<IPerson> _persons = new List<IPerson>();
 
-    readonly List<IEntity> _data = new List<IEntity>();
-    readonly List<IEntity> _car = new List<IEntity>();
+    public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(v => v.Id) + 1;
+
+    public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(v => v.Id) + 1;
+
+    public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(v => v.Id) + 1;
+
 
     public CollectionData() => SeedData();
     private void SeedData()
     {
-        _data.Add(new Customer(NextPersonId, "Toker", "Tok", 99002));
-        _data.Add(new Customer(NextPersonId, "Kloker", "Klok", 99032));
-        _data.Add(new Customer(NextPersonId, "Glader", "Glad", 990321));
+        _persons.Add(new Customer(NextPersonId, "Toker", "Tok", 99002));
+        _persons.Add(new Customer(NextPersonId, "Kloker", "Klok", 99032));
+        _persons.Add(new Customer(NextPersonId, "Glader", "Glad", 990321));
 
-        _data.Add(new Car(NextVehicleId, VehicleTypes.Combi, 2, 100, "Volvo", "SBR110", 20000));
-        _data.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 1, 75, "Saab", "SSB005", 5000));
-        _data.Add(new Car(NextVehicleId, VehicleTypes.Van, 3, 50, "GM", "BIG666", 40000));
-        _data.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 0.5, 150, "Tesla", "JMB007", 2000));
-        _data.Add(new Car(NextVehicleId, VehicleTypes.Combi, 1.5, 80, "Subaru", "FWD224", 17000));
-        _data.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 0.75, 50, "Audi", "BRK900", 1000));
+        _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Combi, 2, 100, "Volvo", "SBR110", 20000));
+        _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 1, 75, "Saab", "SSB005", 5000));
+        _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Van, 3, 50, "GM", "BIG666", 40000));
+        _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 0.5, 150, "Tesla", "JMB007", 2000));
+        _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Combi, 1.5, 80, "Subaru", "FWD224", 17000));
+        _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 0.75, 50, "Audi", "BRK900", 1000));
 
-        _data.Add(new Motorcycle(NextVehicleId, VehicleTypes.Motorcycle, 0.75, 50, "Yamaha", "YZF250", 1000));
-        _data.Add(new Motorcycle(NextVehicleId, VehicleTypes.Motorcycle, 1, 40, "Husqvarna", "TTC300", 50));
+        _vehicles.Add(new Motorcycle(NextVehicleId, VehicleTypes.Motorcycle, 0.75, 50, "Yamaha", "YZF250", 1000));
+        _vehicles.Add(new Motorcycle(NextVehicleId, VehicleTypes.Motorcycle, 1, 40, "Husqvarna", "TTC300", 50));
 
-        IVehicle vehicle = _data.OfType<IVehicle>().Single((v => v.Id.Equals(0)));
-        IVehicle vehicle2 = _data.OfType<IVehicle>().Single(v => v.Id.Equals(3));
+        IVehicle vehicle = _vehicles.Single(v => v.Id.Equals(1));
+        IVehicle vehicle2 = _vehicles.OfType<IVehicle>().Single(v => v.Id.Equals(3));
 
-        _data.Add(new Booking(NextBookingId, vehicle, _data.OfType<IPerson>().Single(p => p.SSN.Equals(99002)),
+        _bookings.Add(new Booking(NextBookingId, vehicle, _persons.OfType<IPerson>().Single(p => p.SSN.Equals(99002)),
             vehicle.Odometer, DateOnly.FromDateTime(DateTime.Now)));
-        
-        _data.Add(new Booking(NextBookingId,vehicle2, _data.OfType<IPerson>().Single(p => p.SSN.Equals(99032)), 
+
+        _bookings.Add(new Booking(NextBookingId, vehicle2, _persons.OfType<IPerson>().Single(p => p.SSN.Equals(99032)),
             vehicle2.Odometer, DateOnly.FromDateTime(DateTime.Now)));
 
         // close one booking
-        _data.OfType<IBooking>().Single(b => b.Id.Equals(1)).CloseBooking(DateOnly.FromDateTime(DateTime.Today.AddDays(3)), 20500);
+        _bookings.First(b => b.Id.Equals(1)).CloseBooking(DateOnly.FromDateTime(DateTime.Today.AddDays(3)), 20500);
+    }
 
-        //_data.AddRange(_vehicles);
-        //_data.AddRange(_persons);
-        //_data.AddRange(_bookings);
-        var car = Get<Car>(c => c.VehicleType.Equals(VehicleTypes.Sedan));
-        foreach (var c in car)
-        {
-            _car.Add(c);
-        }
 
-        GetSingle<IPerson>(p => p.SSN.Equals("99002"));
-        var single = GetSingle<IEntity>(s => s.Id.Equals(1));
-        var single2 = GetSingle<IEntity>();
+    public List<T> GetDataList<T>()
+    {
+        var field = typeof(CollectionData).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).SingleOrDefault(f => f.FieldType.Equals(typeof(List<T>)));
+        if (field == null)
+            throw new ArgumentNullException(nameof(field));
+
+        var data = field.GetValue(this);
+        
+        if (data == null)
+            return new List<T>();
+
+        return (List<T>)data;
     }
 
     public List<T> Get<T>(Expression<Func<T, bool>>? expression = null) where T : class
     {
         try
         {
-            if (expression == null) 
-                return _data.OfType<T>().ToList();
-        
-            return _data.OfType<T>().Where(expression.Compile()).ToList();
+            var data = GetDataList<T>();
+
+            if (expression == null)
+                return data.ToList();
+
+            return data.Where(expression.Compile()).ToList();
         }
         catch (Exception ex)
         {
             throw new ArgumentException($"Could not retrieve List", ex);
         }
-
-        //return _data.Where(x => x.GetType().Equals(typeof(T)));
     }
+
     public T? GetSingle<T>(Expression<Func<T, bool>>? expression = null) where T : class, IEntity
     {
         try
         {
+            var data = GetDataList<T>();
+
             if (expression == null) return null;
 
-            return _data.OfType<T>().FirstOrDefault(expression.Compile());
-            //return (T)_data.FirstOrDefault(x => x.GetType().Equals(typeof(T)) && x.Id.Equals(id));
+            var entity = data.FirstOrDefault(expression.Compile());
+            if (entity == null)
+                throw new NullReferenceException("Could not find entity in db");
+            return entity;
         }
-        catch { return null; }
+        catch (NullReferenceException ex) 
+        { 
+            ex.Data.Add("Error", ex.Message);
+            return null;
+        }
+        catch (Exception) { return null; }
     }
 
     public void Add<T>(T item) where T : class, IEntity
     {
-        _data.Add(item);
+        var data = GetDataList<T>();
+        data.Add(item);
     }
 
     public IBooking RentVehicle(int vehicleId, int customerId)
@@ -139,15 +122,18 @@ public class CollectionData : IData
             if (vehicle.Equals(null) || person.Equals(null))
                 throw new ArgumentNullException($"Booking Failed: VehicleId: {vehicleId}, CustomerId: {customerId}");
 
-            _data.Add(new Booking(NextBookingId, vehicle, person, vehicle.Odometer, DateOnly.FromDateTime(DateTime.Now)));
+            var data = GetDataList<IBooking>();
+
+            var booking = new Booking(NextBookingId, vehicle, person, vehicle.Odometer, DateOnly.FromDateTime(DateTime.Now));
+            data.Add(booking);
             vehicle.Book();
 
-            return _data.OfType<IBooking>().Last();
+            return booking;
         }
-        catch { throw; }
+        catch (Exception ex) { throw new Exception($"Booking Failed", ex); }
     }
 
-    public IBooking ReturnVehicle(int vehicleId)
+    public IBooking ReturnVehicle(int vehicleId, int distance)
     {
         try
         {
@@ -155,10 +141,20 @@ public class CollectionData : IData
             if (booking.Equals(null))
                 throw new NullReferenceException($"Return Failed: VehicleId{vehicleId}");
 
-            booking.CloseBooking(DateOnly.FromDateTime(DateTime.Now), GetSingle<IVehicle>(v => v.Id.Equals(vehicleId)).Odometer);
+            booking.CloseBooking(DateOnly.FromDateTime(DateTime.Now), distance);
 
             return booking;
         }
         catch { throw; }
+    }
+
+
+    public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleStatuses));
+    public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
+    public VehicleTypes GetVehicleType(string name)
+    {
+        var test = (VehicleTypes) Enum.Parse(typeof(VehicleTypes), name);
+
+        return test;
     }
 }

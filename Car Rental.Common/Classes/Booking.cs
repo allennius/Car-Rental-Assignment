@@ -1,5 +1,6 @@
 ﻿using Car_Rental.Common.Enums;
 using Car_Rental.Common.Interfaces;
+using Car_Rental.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ public class Booking : IBooking
     public double GetCost()
     {
         var kmCost = (KmReturned - KmRented) * Vehicle.CostKM;
-        var daysCost = (ReturnDate.DayNumber - RentedDate.DayNumber) * Vehicle.CostDay;
+        var daysCost = RentedDate.Duration(ReturnDate) * Vehicle.CostDay;
 
         return (double)(kmCost + daysCost);
     }

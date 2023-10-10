@@ -3,6 +3,7 @@
 
 public enum VehicleTypes
 {
+    None,
     Combi,
     Sedan,
     Van,
