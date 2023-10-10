@@ -43,7 +43,7 @@ public class Booking : IBooking
         var daysCost = RentedDate.Duration(ReturnDate) * Vehicle.CostDay;
 
 
-        return (kmCost + daysCost);
+        return (double)kmCost + daysCost;
     }
 
     public void CloseBooking(DateOnly date, int odometer)
