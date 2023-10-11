@@ -126,19 +126,16 @@ public class BookingProcessor
         try
         {
             if (vehicleId < 0 || customerId < 0 || customerId == null)
-            {
                 throw new ArgumentException("Check Input, did you select a customer?");
-            }
 
             loading = true;
             await Task.Delay(5000);
             loading = false;
+            
             var booking = _db.RentVehicle(vehicleId, (int)customerId);
             if (booking == null)
-            {
-                loading = false;
                 throw new ArgumentNullException($"Booking Failed: VehicleId: {vehicleId}, CustomerId: {customerId}");
-            }
+                
             _message = "RENTED: " + booking.ToString();
 
             return booking;
