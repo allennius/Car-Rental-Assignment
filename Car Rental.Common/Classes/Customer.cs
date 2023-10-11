@@ -9,11 +9,11 @@ namespace Car_Rental.Common.Classes;
 public class Customer : IPerson
 {
     public int Id { get; init; }
-    public string FirstName { get; init; } = string.Empty;
-    public string LastName { get; init; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
     public string Name => $"{FirstName} {LastName}";
-    public int SSN { get; init; }
+    public int? SSN { get; set; }
 
-    public Customer(int id, string firstName, string lastName, int ssn) =>
+    public Customer(string firstName, string lastName, int? ssn, int id) =>
         (Id, FirstName, LastName, SSN) = (id, firstName, lastName, ssn);
 }

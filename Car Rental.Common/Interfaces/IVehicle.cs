@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace Car_Rental.Common.Interfaces;
 public interface IVehicle : IEntity
 {
-    public VehicleTypes VehicleType { get; init; }
+    public VehicleTypes VehicleType { get; }
     public VehicleStatuses Status { get; }
-    public string Make { get; init; }
-    public string RegNo { get; init; }
+    public string Make { get; }
+    public string RegNo { get; }
     public int Odometer { get; }
-    public double CostKM { get; init; }
-    public double CostDay { get; init; }
+    public double CostKM { get; }
+    public double CostDay { get; }
 
     void ReturnVehicle(int odometer);
     void Book();

@@ -10,13 +10,13 @@ namespace Car_Rental.Common.Classes;
 public class Vehicle : IVehicle
 {
     public int Id { get; init; }
-    public VehicleTypes VehicleType { get; init; }
-    public VehicleStatuses Status { get; private set; }
-    public string Make { get; init; }
-    public string RegNo { get; init; }
-    public int Odometer { get; private set; }
-    public double CostKM { get; init; }
-    public double CostDay { get; init; }
+    public VehicleTypes VehicleType { get; set; }
+    public VehicleStatuses Status { get; set; }
+    public string Make { get; set; }
+    public string RegNo { get; set; }
+    public int Odometer { get; set; }
+    public double CostKM { get; set; }
+    public double CostDay { get; set; }
 
     public Vehicle(int id, VehicleTypes vehicleType, double costKM, double costDay, string make, string regNo, int odometer, VehicleStatuses status = VehicleStatuses.Available) =>
         (Id, VehicleType, CostKM, CostDay, Make, RegNo, Odometer, Status) = (id, vehicleType, costKM, costDay, make, regNo, odometer, status);

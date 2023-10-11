@@ -13,9 +13,9 @@ namespace Car_Rental.Business.Classes;
 public class BookingProcessor
 {
     private readonly IData _db;
-    public string _error = string.Empty;
-    public string _message = string.Empty;
-    public bool loading = false;
+    public string _error { get; set; } = string.Empty;
+    public string _message { get; set; } = string.Empty;
+    public bool loading { get; set; } = false;
 
     public BookingProcessor(IData db)
     {
@@ -120,21 +120,21 @@ public class BookingProcessor
         }
     }
 
-    public async Task<IBooking>? RentVehicle(int vehicleId, int customerId)
+    public async Task<IBooking>? RentVehicle(int vehicleId, int? customerId)
     {
         ClearStrings();
         try
         {
-            if(vehicleId < 0  || customerId < 0)
+            if (vehicleId < 0 || customerId < 0 || customerId == null)
             {
                 throw new ArgumentException("Check Input, did you select a customer?");
             }
-            
+
             loading = true;
             await Task.Delay(5000);
             loading = false;
-            var booking = _db.RentVehicle(vehicleId, customerId);
-            if (booking.Equals(null))
+            var booking = _db.RentVehicle(vehicleId, (int)customerId);
+            if (booking == null)
             {
                 loading = false;
                 throw new ArgumentNullException($"Booking Failed: VehicleId: {vehicleId}, CustomerId: {customerId}");
@@ -212,7 +212,7 @@ public class BookingProcessor
                 throw new Exception("Person already exist in Db");
 
             ClearStrings();
-            _db.Add<IPerson>(new Customer(_db.NextPersonId, firstName, lastName, ssn));
+            _db.Add<IPerson>(new Customer(firstName, lastName, ssn, _db.NextPersonId));
 
            _message = "Added new customer";
         }

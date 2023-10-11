@@ -5,19 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Car_Rental.Common.Classes.UserInput;
-public class NewCustomerInputs
+public class NewCustomerInputs : Customer
 {
     public string errorMessage = string.Empty;
-    public int? socialSecurityNumber = default;
-    public string firstName = string.Empty;
-    public string lastName = string.Empty;
-    
+
+    public NewCustomerInputs(string firstName, string lastName, int? ssn = null, int id = default) : base(firstName, lastName, ssn, id)
+    {
+        //FirstName = firstName;
+        //LastName = lastName;
+        //SSN = ssn;
+        //errorMessage = string.Empty;
+    }
+
     public bool isInputs()
     {
         errorMessage = string.Empty;
-        if (socialSecurityNumber.Equals(null)) errorMessage += " SSN,";
-        if (firstName.Equals(string.Empty)) errorMessage += " Firstname,";
-        if (lastName.Equals(string.Empty)) errorMessage += " Lastname,";
+        if (SSN.Equals(0)) errorMessage += " SSN,";
+        if (FirstName.Equals(string.Empty)) errorMessage += " Firstname,";
+        if (LastName.Equals(string.Empty)) errorMessage += " Lastname,";
 
         if (errorMessage.Equals(string.Empty)) return true;
 

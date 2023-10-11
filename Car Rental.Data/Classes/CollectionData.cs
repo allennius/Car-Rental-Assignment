@@ -27,9 +27,9 @@ public class CollectionData : IData
     public CollectionData() => SeedData();
     private void SeedData()
     {
-        _persons.Add(new Customer(NextPersonId, "Toker", "Tok", 99002));
-        _persons.Add(new Customer(NextPersonId, "Kloker", "Klok", 99032));
-        _persons.Add(new Customer(NextPersonId, "Glader", "Glad", 990321));
+        _persons.Add(new Customer("Toker", "Tok", 99002, NextPersonId));
+        _persons.Add(new Customer("Kloker", "Klok", 99032, NextPersonId));
+        _persons.Add(new Customer("Glader", "Glad", 990321, NextPersonId));
 
         _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Combi, 2, 100, "Volvo", "SBR110", 20000));
         _vehicles.Add(new Car(NextVehicleId, VehicleTypes.Sedan, 1, 75, "Saab", "SSB005", 5000));
@@ -119,7 +119,7 @@ public class CollectionData : IData
         {
             var vehicle = GetSingle<IVehicle>(v => v.Id.Equals(vehicleId));
             var person = GetSingle<IPerson>(p => p.Id.Equals(customerId));
-            if (vehicle.Equals(null) || person.Equals(null))
+            if (vehicle == null || person == null)
                 throw new ArgumentNullException($"Booking Failed: VehicleId: {vehicleId}, CustomerId: {customerId}");
 
             var data = GetDataList<IBooking>();
@@ -138,7 +138,7 @@ public class CollectionData : IData
         try
         {
             var booking = GetSingle<IBooking>(b => b.Vehicle.Id.Equals(vehicleId) && b.Status.Equals(BookingStatus.Booked));
-            if (booking.Equals(null))
+            if (booking == null)
                 throw new NullReferenceException($"Return Failed: VehicleId{vehicleId}");
 
             booking.CloseBooking(DateOnly.FromDateTime(DateTime.Now), distance);

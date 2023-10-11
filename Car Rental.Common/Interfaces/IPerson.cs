@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Car_Rental.Common.Interfaces;
 public interface IPerson : IEntity
 {
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
+    public string FirstName { get; }
+    public string LastName { get; }
 
     public string Name => $"{FirstName} {LastName}";
-    public int SSN { get; init; }
+    public int? SSN { get; }
 }

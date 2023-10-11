@@ -2,10 +2,6 @@
 @using Car_Rental.Common.Classes.UserInput;
 @using System.Globalization;
 @inject BookingProcessor br;
-@inject NewCustomerInputs ci;
-@inject NewVehicleInputs vi;
-@inject ReturnVehicle returnv;
-@inject RentVehicle rentv;
 
 <PageTitle>Car Rental Assignment Generics</PageTitle>
 
@@ -32,12 +28,12 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="text" class="form-control" placeholder="RegNo" @bind="vi.regNo" disabled="@(br.loading == true ? "disabled" : null)" /></td>
-                    <td><input type="text" class="form-control" placeholder="Make" @bind="vi.make" disabled="@(br.loading == true ? "disabled" : null)" /></td>
-                    <td><input type="text" class="form-control" placeholder="Odometer" @bind="vi.odometer" disabled="@(br.loading == true ? "disabled" : null)" /></td>
-                    <td><input type="text" class="form-control" placeholder="CostKm" @bind="vi.costKm" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="RegNo" @bind="vi.RegNo" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="Make" @bind="vi.Make" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="Odometer" @bind="vi.Odometer" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="CostKm" @bind="vi.CostKM" disabled="@(br.loading == true ? "disabled" : null)" /></td>
                     <td class="col-md-2 col-xl-2">
-                        <select class="form-select" disabled="@(br.loading == true ? "disabled" : null)" @bind="vi.type">
+                        <select class="form-select" disabled="@(br.loading == true ? "disabled" : null)" @bind="vi.VehicleType">
                             @foreach (var type in br.VehicleTypeNames.Reverse())
                             {
                                 <option value="@type" disabled="@(VehicleStatuses.None.ToString() == type ? "disabled" : null)">@type</option>
@@ -45,9 +41,9 @@
 
                         </select>
                     </td>
-                    <td><input type="text" class="form-control" placeholder="CostDay" @bind="vi.costDay" disabled="@(br.loading == true ? "disabled" : null)" /></td>
+                    <td><input type="text" class="form-control" placeholder="CostDay" @bind="vi.CostDay" disabled="@(br.loading == true ? "disabled" : null)" /></td>
                     <td>
-                        <button class="btn btn-light text-success btn-outline-success" @onclick="(() => { if(vi.isInputs()) br.AddVehicle(vi.make.ToUpper(), vi.odometer, vi.costKm, vi.costDay, vi.regNo.ToUpper(), vi.type); })" disabled="@(br.loading == true ? "disabled" : null)">
+                        <button class="btn btn-light text-success btn-outline-success" @onclick="(() => { if(vi.isInputs()) br.AddVehicle(vi.Make.ToUpper(), vi.Odometer, vi.CostKM, vi.CostDay, vi.RegNo.ToUpper(), vi.VehicleType); })" disabled="@(br.loading == true ? "disabled" : null)">
                             Add
                         </button>
                     </td>
@@ -163,10 +159,10 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><input class="form-control" @bind="ci.socialSecurityNumber" placeholder="SSN"/></td>
-                    <td><input class="form-control" @bind="ci.firstName" placeholder="Lastname"/></td>
-                    <td><input class="form-control" @bind="ci.lastName" placeholder="Firstname"/></td>
-                    <td><button class="btn btn-light btn-success btn-outline-success" @onclick="() => { if (ci.isInputs()) br.AddCustomer(ci.socialSecurityNumber, ci.firstName, ci.lastName); }" >Add</button></td>
+                    <td><input class="form-control" @bind="ci.SSN" placeholder="SSN"/></td>
+                    <td><input class="form-control" @bind="ci.FirstName" placeholder="Lastname"/></td>
+                    <td><input class="form-control" @bind="ci.LastName" placeholder="Firstname"/></td>
+                    <td><button class="btn btn-light btn-success btn-outline-success" @onclick="() => { if (ci.isInputs()) br.AddCustomer(ci.SSN, ci.FirstName, ci.LastName); }" >Add</button></td>
                 </tr>
                 @foreach (var customer in br.GetCustomers())
                 {
@@ -182,3 +178,11 @@
 </div>
 
 <div class="m-3"></div>
+
+
+@code{
+        NewCustomerInputs ci = new NewCustomerInputs(string.Empty, string.Empty, null);
+        NewVehicleInputs vi = new NewVehicleInputs(-1, VehicleTypes.None, 0, 0, string.Empty, string.Empty, 0);
+        ReturnVehicle returnv = new();
+        RentVehicle rentv = new();
+}
